@@ -5,7 +5,8 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "postinstall": "curl -L -o rhubarb.zip https://github.com/DanielSWolf/rhubarb-lip-sync/releases/download/v1.13.0/rhubarb-Linux.zip && unzip rhubarb.zip -d bin && chmod +x bin/rhubarb"
   },
   "author": "Wawa SENSEI <contact@wawasensei.dev>",
   "dependencies": {
