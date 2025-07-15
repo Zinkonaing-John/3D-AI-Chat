@@ -1,15 +1,17 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useChat } from "../hooks/useChat";
 
-export const UI = ({ hidden, ...props }) => {
+export const UI = ({ hidden, language, setLanguage, ...props }) => {
   const input = useRef();
+  const [inputValue, setInputValue] = useState("");
+  const [composing, setComposing] = useState(false);
   const { chat, loading, cameraZoomed, setCameraZoomed, message } = useChat();
 
   const sendMessage = () => {
-    const text = input.current.value;
-    if (!loading && !message) {
-      chat(text);
-      input.current.value = "";
+    const text = inputValue;
+    if (!loading && !message && text.trim() !== "") {
+      chat(text, language);
+      setInputValue("");
     }
   };
   if (hidden) {
@@ -20,8 +22,10 @@ export const UI = ({ hidden, ...props }) => {
     <>
       <div className="fixed top-0 left-0 right-0 bottom-0 z-10 flex justify-between p-4 flex-col pointer-events-none">
         <div className="self-start backdrop-blur-md bg-white bg-opacity-50 p-4 rounded-lg">
-          <h1 className="font-black text-xl">My Virtual GF</h1>
-          <p>I will always love you ❤️</p>
+          <h1 className="font-black text-xl">
+            <span className="text-pink-500">Bloom</span> AI Assistant
+          </h1>
+          <p>We will always be here for you </p>
         </div>
         <div className="w-full flex flex-col items-end justify-center gap-4">
           <button
@@ -91,8 +95,12 @@ export const UI = ({ hidden, ...props }) => {
             className="w-full placeholder:text-gray-800 placeholder:italic p-4 rounded-md bg-opacity-50 bg-white backdrop-blur-md"
             placeholder="Type a message..."
             ref={input}
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            onCompositionStart={() => setComposing(true)}
+            onCompositionEnd={() => setComposing(false)}
             onKeyDown={(e) => {
-              if (e.key === "Enter") {
+              if (e.key === "Enter" && !composing) {
                 sendMessage();
               }
             }}

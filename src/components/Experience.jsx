@@ -37,30 +37,52 @@ const Dots = (props) => {
   );
 };
 
-export const Experience = () => {
+export const Experience = ({ selectedCharacter, selectedAnimation }) => {
   const cameraControls = useRef();
   const { cameraZoomed } = useChat();
 
+  // Only set initial camera position on mount
   useEffect(() => {
-    cameraControls.current.setLookAt(0, 2, 5, 0, 1.5, 0);
+    if (cameraControls.current) {
+      cameraControls.current.setLookAt(0, 1.2, 3.5, 0, 1, 0);
+    }
   }, []);
 
   useEffect(() => {
+    if (!cameraControls.current) return;
     if (cameraZoomed) {
-      cameraControls.current.setLookAt(0, 1.5, 1.5, 0, 1.5, 0, true);
+      cameraControls.current.setLookAt(0, 1.2, 2.2, 0, 1, 0, true); // Full body zoomed
     } else {
-      cameraControls.current.setLookAt(0, 2.2, 5, 0, 1.0, 0, true);
+      cameraControls.current.setLookAt(0, 1.2, 3.5, 0, 1, 0, true); // Full body unzoomed
     }
+    // After moving, user can freely zoom/orbit
   }, [cameraZoomed]);
+
+  // Auto-focus camera on character change
+  useEffect(() => {
+    if (cameraControls.current) {
+      cameraControls.current.setLookAt(0, 1.2, 3.5, 0, 1, 0, true);
+    }
+  }, [selectedCharacter]);
+
   return (
     <>
-      <CameraControls ref={cameraControls} />
+      <CameraControls
+        ref={cameraControls}
+        enabled={true}
+        dollyToCursor={true}
+        minDistance={1.2}
+        maxDistance={10}
+      />
       <Environment preset="sunset" />
       {/* Wrapping Dots into Suspense to prevent Blink when Troika/Font is loaded */}
       <Suspense>
         <Dots position-y={1.75} position-x={-0.02} />
       </Suspense>
-      <Avatar />
+      <Avatar
+        modelPath={`/models/${selectedCharacter}`}
+        selectedAnimation={selectedAnimation}
+      />
       <ContactShadows opacity={0.7} />
     </>
   );

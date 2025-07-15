@@ -106,10 +106,12 @@ const corresponding = {
 
 let setupMode = false;
 
-export function Avatar(props) {
-  const { nodes, materials, scene } = useGLTF(
-    "/models/64f1a714fe61576b46f27ca2.glb"
-  );
+export function Avatar({
+  modelPath = "/models/64f1a714fe61576b46f27ca2.glb",
+  selectedAnimation = "Idle",
+  ...props
+}) {
+  const { nodes, materials, scene } = useGLTF(modelPath);
 
   const { message, onMessagePlayed, chat } = useChat();
 
@@ -135,15 +137,23 @@ export function Avatar(props) {
   const group = useRef();
   const { actions, mixer } = useAnimations(animations, group);
   const [animation, setAnimation] = useState(
-    animations.find((a) => a.name === "Idle") ? "Idle" : animations[0].name // Check if Idle animation exists otherwise use first animation
+    animations.find((a) => a.name === "Idle") ? "Idle" : animations[0].name
   );
+
+  // Update animation when selectedAnimation changes (unless a message is playing)
+  useEffect(() => {
+    if (!message) {
+      setAnimation(selectedAnimation);
+    }
+  }, [selectedAnimation, message]);
+
   useEffect(() => {
     actions[animation]
       .reset()
       .fadeIn(mixer.stats.actions.inUse === 0 ? 0 : 0.5)
       .play();
     return () => actions[animation].fadeOut(0.5);
-  }, [animation]);
+  }, [animation, actions, mixer.stats.actions.inUse]);
 
   const lerpMorphTarget = (target, value, speed = 0.1) => {
     scene.traverse((child) => {
