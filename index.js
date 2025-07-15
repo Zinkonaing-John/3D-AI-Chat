@@ -164,5 +164,5 @@ const audioFileToBase64 = async (file) => {
 };
 
 app.listen(port, () => {
-  console.log(`Virtual Assistance listening on port ${port}`);
+  console.log(`Server running on port ${port}`);
 });
