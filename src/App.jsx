@@ -7,8 +7,7 @@ import { useState, useRef, useEffect } from "react";
 
 function App() {
   const [selectedCharacter, setSelectedCharacter] = useState(
-    "64f1a714fe61576b46f27ca2.glb",
-    "68761905789db9affbd8db00.glb"
+    "64f1a714fe61576b46f27ca2.glb"
   );
   const [selectedAnimation, setSelectedAnimation] = useState("Idle");
   const [language, setLanguage] = useState("en");
